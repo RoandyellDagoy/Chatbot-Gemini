@@ -9,4 +9,7 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::get('/all',[RecipeController::class, 'index']);
-Route::get('/getID',[RecipeController::class, 'show']);
+Route::get('/getRecipe/{id}',[RecipeController::class, 'show']);
+Route::post('/addRecipe',[RecipeController::class, 'store']);
+Route::put('/recipe/{id}',[RecipeController::class, 'update']);
+Route::delete('/delt/{id}',[RecipeController::class, 'delete']);
