@@ -24,29 +24,17 @@ const App = () => {
       ]);
     };
 
-    history = history.map(({ role, text }) => ({ role, parts: [{ text }] }));
-
-    const requestOptions = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": import.meta.env.VITE_GEMINI_API_KEY,
-      },
-      body: JSON.stringify({ contents: history }),
-    };
-
     try {
-      const response = await fetch(
-        import.meta.env.VITE_GEMINI_API_URL,
-        requestOptions
-      );
-      const data = await response.json();
-      if (!response.ok)
-        throw new Error(data.error.message || "Something went wrong!!");
+      const res = await fetch("/api/gemini", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ history }),
+      });
 
-      const apiResponse = data.candidates[0].content.parts[0].text
-        .replace()
-        .trim();
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Something went wrong!!");
+
+      const apiResponse = data.candidates[0].content.parts[0].text.trim();
       updateHistory(apiResponse);
     } catch (error) {
       updateHistory(error.message, true);
