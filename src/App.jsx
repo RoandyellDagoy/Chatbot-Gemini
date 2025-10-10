@@ -29,7 +29,6 @@ const App = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-goog-api-key": process.env.GEMINI_API_KEY,
         },
         body: JSON.stringify({ history }),
       });
