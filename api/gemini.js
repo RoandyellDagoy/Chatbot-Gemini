@@ -8,13 +8,11 @@ export default async function handler(req, res) {
       parts: [{ text }],
     }));
 
-    // Call Gemini API securely with your API key
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json",
-            "x-goog-api-key": process.env.GEMINI_API_KEY, 
         },
         body: JSON.stringify({ contents: formattedHistory }),
       }
