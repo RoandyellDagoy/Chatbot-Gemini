@@ -2,7 +2,7 @@ export default async function handler(req, res) {
   try {
     const { history } = await req.json();
 
-    // Format Gemini request payload
+   
     const formattedHistory = history.map(({ role, text }) => ({
       role,
       parts: [{ text }],
@@ -13,7 +13,9 @@ export default async function handler(req, res) {
       `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+            "x-goog-api-key": process.env.GEMINI_API_KEY, 
+        },
         body: JSON.stringify({ contents: formattedHistory }),
       }
     );
