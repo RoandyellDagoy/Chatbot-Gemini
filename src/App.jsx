@@ -1,12 +1,29 @@
 import ChatbotIcon from "./components/ChatbotIcon";
 import ChartForm from "./components/ChartForm";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import ChatMessage from "./components/ChatMessage";
+import { info } from "./info";
 
 const App = () => {
-  const [chatHistory, setChatHistory] = useState([]);
+  const [chatHistory, setChatHistory] = useState([
+    {
+      hideInChat: true,
+      role: "model",
+      text: info,
+    },
+  ]);
+  const [showChatBot, setShowChatBot] = useState(false);
+
+  const chatBodyRef = useRef();
 
   const generateBotResponse = async (history) => {
+    const updateHistory = (text, isError = false) => {
+      setChatHistory((prev) => [
+        ...prev.filter((msg) => msg.text !== "Thinking..."),
+        { role: "model", text, isError },
+      ]);
+    };
+
     history = history.map(({ role, text }) => ({ role, parts: [{ text }] }));
 
     const requestOptions = {
@@ -27,33 +44,50 @@ const App = () => {
       if (!response.ok)
         throw new Error(data.error.message || "Something went wrong!!");
 
-      console.log(data);
+      const apiResponse = data.candidates[0].content.parts[0].text
+        .replace()
+        .trim();
+      updateHistory(apiResponse);
     } catch (error) {
-      console.log(error);
+      updateHistory(error.message, true);
     }
   };
 
+  useEffect(() => {
+    chatBodyRef.current.scrollTo({
+      top: chatBodyRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [chatHistory]);
+
   return (
-    <div className="container">
+    <div className={`container ${showChatBot ? "show-chatbot" : " "}`}>
+      <button
+        onClick={() => setShowChatBot((prev) => !prev)}
+        id="chatbot-toggle"
+      >
+        <span className="material-symbols-rounded">mode_comment</span>
+        <span className="material-symbols-rounded">close</span>
+      </button>
+
       <div className="chatbot-popup">
-        {/* Chatbot - header  */}
         <div className="chat-header">
           <div className="header-info">
             <ChatbotIcon />
-            <h2 className="logo-text">Chatbot</h2>
+            <h2 className="logo-text">RondelAi</h2>
           </div>
-          <button className="material-symbols-rounded">
+          <button
+            onClick={() => setShowChatBot((prev) => !prev)}
+            className="material-symbols-rounded"
+          >
             keyboard_arrow_down
           </button>
         </div>
 
-        {/* Chatbot body */}
-        <div className="chat-body">
+        <div ref={chatBodyRef} className="chat-body">
           <div className="message bot-message">
             <ChatbotIcon />
-            <p className="message-text">
-              Hi ther <br /> How can i help you?
-            </p>
+            <p className="message-text">Hi i'm rondel 🙂😄😎</p>
           </div>
 
           {chatHistory.map((chat, index) => (
@@ -61,7 +95,6 @@ const App = () => {
           ))}
         </div>
 
-        {/* Chat Footer */}
         <div className="chat-footer">
           <ChartForm
             chatHistory={chatHistory}
