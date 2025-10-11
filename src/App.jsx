@@ -64,7 +64,7 @@ const App = () => {
         <div className="chat-header">
           <div className="header-info">
             <ChatbotIcon />
-            <h2 className="logo-text">RondelAi</h2>
+            <h2 className="logo-text">Chatbot</h2>
           </div>
           <button
             onClick={() => setShowChatBot((prev) => !prev)}
@@ -77,7 +77,9 @@ const App = () => {
         <div ref={chatBodyRef} className="chat-body">
           <div className="message bot-message">
             <ChatbotIcon />
-            <p className="message-text">Hi i'm rondel 🙂😄😎</p>
+            <p className="message-text">
+              Hi there! <br /> how can i help you?
+            </p>
           </div>
 
           {chatHistory.map((chat, index) => (
