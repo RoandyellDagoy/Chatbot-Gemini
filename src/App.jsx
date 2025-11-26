@@ -5,13 +5,18 @@ import ChatMessage from "./components/ChatMessage";
 import { info } from "./info";
 
 const App = () => {
-  const [chatHistory, setChatHistory] = useState([
-    {
-      hideInChat: true,
-      role: "model",
-      text: info,
-    },
-  ]);
+  const [chatHistory, setChatHistory] = useState(() => {
+    const storedChat = localStorage.getItem("chatHistory");
+    return storedChat
+      ? JSON.parse(storedChat)
+      : [
+          {
+            hideInChat: true,
+            role: "model",
+            text: info,
+          },
+        ];
+  });
   const [showChatBot, setShowChatBot] = useState(false);
 
   const chatBodyRef = useRef();
@@ -42,6 +47,10 @@ const App = () => {
       updateHistory(error.message, true);
     }
   };
+
+  useEffect(() => {
+    localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
+  }, [chatHistory]);
 
   useEffect(() => {
     chatBodyRef.current.scrollTo({
